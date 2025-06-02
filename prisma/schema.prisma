@@ -40,7 +40,7 @@ model Company {
 model Activity {
   id       Int      @id @default(autoincrement())
   date     DateTime
-  duration Float    @default(1)
+  duration Time    @default(FULL_DAY)
   cra      CRA      @relation(fields: [craId], references: [id], name: "CRA-activities")
   craId    Int
 }
@@ -53,4 +53,9 @@ model CRA {
   clientId          Int
   month             DateTime
   activities        Activity[] @relation("CRA-activities")
+}
+
+enum Time {
+  FULL_DAY
+  HALF_DAY
 }
