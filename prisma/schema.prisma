@@ -5,57 +5,45 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+	provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+	provider = "mysql"
+	url      = env("DATABASE_URL")
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+	id    String     @id
 }
 
 model Company {
-  SIRET        Int     @id
-  businessName String
-  address      String?
-  serviceCRAs  CRA[]   @relation("ServiceProvider")
-  clientCRAs   CRA[]   @relation("Client")
+	businessName String   		@id
+	serviceCRAs  Report[]    	@relation("ServiceProvider")
+	clientCRAs   Report[]    	@relation("Client")
 }
 
 model Activity {
-  id       Int      @id @default(autoincrement())
-  date     DateTime
-  duration Time    @default(FULL_DAY)
-  cra      CRA      @relation(fields: [craId], references: [id], name: "CRA-activities")
-  craId    Int
+	id       	String       		@id @default(uuid(4))
+	date     	DateTime
+	timeWorked 	TimeWorked
+	report      Report          	@relation(fields: [reportId], references: [id], name: "CRA-activities")
+	reportId    String
+	comment		String?
 }
 
-model CRA {
-  id                Int        @id
-  serviceProvider   Company    @relation(fields: [serviceProviderId], references: [SIRET], name: "ServiceProvider")
-  serviceProviderId Int
-  client            Company    @relation(fields: [clientId], references: [SIRET], name: "Client")
-  clientId          Int
-  month             DateTime
-  activities        Activity[] @relation("CRA-activities")
+model Report {
+	id                	String		@id @default(uuid(4))
+	serviceProvider   	Company    	@relation(fields: [serviceProviderId], references: [businessName], name: "ServiceProvider")
+	serviceProviderId 	String
+	client            	Company    	@relation(fields: [clientId], references: [businessName], name: "Client")
+	clientId          	String
+	monthReport       	DateTime
+	activities        	Activity[] 	@relation("CRA-activities")
+	comment				String?
 }
 
-enum Time {
-  FULL_DAY
-  HALF_DAY
+enum TimeWorked {
+	FULL_DAY
+	HALF_DAY
 }
