@@ -27,7 +27,7 @@ export class AppController {
 
   @Get('post/:id')
   async getPostById(@Param('id') id: string): Promise<PostModel> {
-    const post = this.postService.post({ id: Number(id) });
+    const post = await this.postService.post({ id: Number(id) });
     if (post != null) {
       return post;
     }
@@ -93,4 +93,3 @@ export class AppController {
     return this.postService.deletePost({ id: Number(id) });
   }
 }
-
