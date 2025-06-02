@@ -14,17 +14,43 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
+  id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
   posts Post[]
 }
 
 model Post {
-  id        Int      @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   title     String
   content   String?
   published Boolean? @default(false)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+}
+
+model Company {
+  SIRET        Int     @id
+  businessName String
+  address      String?
+  serviceCRAs  CRA[]   @relation("ServiceProvider")
+  clientCRAs   CRA[]   @relation("Client")
+}
+
+model Activity {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  duration Float    @default(1)
+  cra      CRA      @relation(fields: [craId], references: [id], name: "CRA-activities")
+  craId    Int
+}
+
+model CRA {
+  id                Int        @id
+  serviceProvider   Company    @relation(fields: [serviceProviderId], references: [SIRET], name: "ServiceProvider")
+  serviceProviderId Int
+  client            Company    @relation(fields: [clientId], references: [SIRET], name: "Client")
+  clientId          Int
+  month             DateTime
+  activities        Activity[] @relation("CRA-activities")
 }
