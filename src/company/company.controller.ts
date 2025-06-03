@@ -12,11 +12,11 @@ import { Company } from '@prisma/client';
 
 @Controller('company')
 export class CompanyController {
-  constructor(private readonly companiesService: CompanyService) {}
+  constructor(private readonly companyService: CompanyService) {}
 
   @Get(':id')
   async getCompanyById(@Param('id') id: string): Promise<Company> {
-    const company = await this.companiesService.getCompany({
+    const company = await this.companyService.getCompany({
       id,
     });
     if (company) {
@@ -27,14 +27,14 @@ export class CompanyController {
 
   @Get()
   async getAllCompanies(): Promise<Company[]> {
-    return this.companiesService.getAllCompanies();
+    return this.companyService.getAllCompanies();
   }
 
   @Post()
   async createCompany(
     @Body() data: { businessName: string },
   ): Promise<Company> {
-    return this.companiesService.createCompany(data);
+    return this.companyService.createCompany(data);
   }
 
   @Put(':id')
@@ -45,7 +45,7 @@ export class CompanyController {
       businessName: string;
     },
   ): Promise<Company> {
-    return this.companiesService.updateCompany({
+    return this.companyService.updateCompany({
       data,
       where: { id },
     });
@@ -53,6 +53,6 @@ export class CompanyController {
 
   @Delete(':id')
   async deleteCompany(@Param('id') id: string): Promise<Company> {
-    return this.companiesService.deleteCompany({ id });
+    return this.companyService.deleteCompany({ id });
   }
 }
