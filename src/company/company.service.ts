@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { Prisma, Company } from '@prisma/client';
 
 @Injectable()
-export class CompaniesService {
+export class CompanyService {
   constructor(private prisma: PrismaService) {}
 
   async getCompany(

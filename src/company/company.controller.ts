@@ -7,12 +7,12 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { CompaniesService } from './companies.service';
+import { CompanyService } from './company.service';
 import { Company } from '@prisma/client';
 
-@Controller('companies')
-export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) {}
+@Controller('company')
+export class CompanyController {
+  constructor(private readonly companiesService: CompanyService) {}
 
   @Get(':id')
   async getCompanyById(@Param('id') id: string): Promise<Company> {
