@@ -13,4 +13,31 @@ export class CompaniesService {
       where: companyWhereUniqueInput,
     });
   }
+
+  async getAllCompanies(): Promise<Company[]> {
+    return this.prisma.company.findMany();
+  }
+
+  async createCompany(data: Prisma.CompanyCreateInput): Promise<Company> {
+    return this.prisma.company.create({
+      data,
+    });
+  }
+
+  async updateCompany(params: {
+    data: Prisma.CompanyUpdateInput;
+    where: Prisma.CompanyWhereUniqueInput;
+  }): Promise<Company> {
+    const { data, where } = params;
+    return this.prisma.company.update({
+      data,
+      where,
+    });
+  }
+
+  async deleteCompany(where: Prisma.CompanyWhereUniqueInput): Promise<Company> {
+    return this.prisma.company.delete({
+      where,
+    });
+  }
 }
