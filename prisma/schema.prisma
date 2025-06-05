@@ -14,14 +14,17 @@ datasource db {
 }
 
 model User {
-  id      String   @id
-  reports Report[] @relation("User_reports")
+  id        String    @id
+  reports   Report[]  @relation("User_reports")
+  companies Company[] @relation("User_companies")
 }
 
 model Company {
-  id           String   @id @default(uuid(4))
-  businessName String
-  reports      Report[] @relation("Client")
+  id            String   @id @default(uuid(4))
+  businessName  String
+  reports       Report[] @relation("Client")
+  userCreator   User     @relation(name: "User_companies", fields: [userCreatorId], references: [id])
+  userCreatorId String
 }
 
 model Activity {
