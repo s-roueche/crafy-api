@@ -32,9 +32,21 @@ export class CompanyController {
 
   @Post()
   async createCompany(
-    @Body() data: { businessName: string },
+    @Body()
+    data: {
+      businessName: string;
+      userCreatorId: string;
+    },
   ): Promise<Company> {
-    return this.companyService.createCompany(data);
+    const { businessName, userCreatorId } = data;
+    return this.companyService.createCompany({
+      businessName,
+      userCreator: {
+        connect: {
+          id: userCreatorId,
+        },
+      },
+    });
   }
 
   @Put(':id')
@@ -43,6 +55,7 @@ export class CompanyController {
     @Body()
     data: {
       businessName: string;
+      userCreatorId: string;
     },
   ): Promise<Company> {
     return this.companyService.updateCompany({

@@ -33,7 +33,11 @@ describe('CompanyController', () => {
 
   describe('getCompanyById', () => {
     it('should return a company if found', async () => {
-      const company: Company = { id: '1', businessName: 'ACME Corp' };
+      const company: Company = {
+        id: '1',
+        businessName: 'ACME Corp',
+        userCreatorId: '1',
+      };
       mockCompanyService.getCompany.mockResolvedValue(company);
 
       const result = await controller.getCompanyById('1');
@@ -53,8 +57,8 @@ describe('CompanyController', () => {
   describe('getAllCompanies', () => {
     it('should return an array of companies', async () => {
       const companies: Company[] = [
-        { id: '1', businessName: 'ACME Corp' },
-        { id: '2', businessName: 'Globex Inc' },
+        { id: '1', businessName: 'ACME Corp', userCreatorId: '1' },
+        { id: '2', businessName: 'Globex Inc', userCreatorId: '2' },
       ];
       mockCompanyService.getAllCompanies.mockResolvedValue(companies);
 
@@ -73,16 +77,27 @@ describe('CompanyController', () => {
 
   describe('createCompany', () => {
     it('should create and return a new company', async () => {
-      const input = { businessName: 'Stark Industries' };
+      const input = {
+        businessName: 'Stark Industries',
+        userCreatorId: '1',
+      };
       const createdCompany: Company = {
         id: '3',
         businessName: 'Stark Industries',
+        userCreatorId: '1',
       };
 
       mockCompanyService.createCompany.mockResolvedValue(createdCompany);
 
       const result = await controller.createCompany(input);
-      expect(mockCompanyService.createCompany).toHaveBeenCalledWith(input);
+      expect(mockCompanyService.createCompany).toHaveBeenCalledWith({
+        businessName: input.businessName,
+        userCreator: {
+          connect: {
+            id: input.userCreatorId,
+          },
+        },
+      });
       expect(result).toBe(createdCompany);
     });
   });
@@ -90,10 +105,14 @@ describe('CompanyController', () => {
   describe('updateCompany', () => {
     it('should update and return a company', async () => {
       const id = '1';
-      const updateData = { businessName: 'Wayne Enterprises' };
+      const updateData = {
+        businessName: 'Wayne Enterprises',
+        userCreatorId: '1',
+      };
       const updatedCompany: Company = {
         id,
         businessName: 'Wayne Enterprises',
+        userCreatorId: '1',
       };
 
       mockCompanyService.updateCompany.mockResolvedValue(updatedCompany);
@@ -112,6 +131,7 @@ describe('CompanyController', () => {
       const deletedCompany: Company = {
         id: '1',
         businessName: 'Old Co',
+        userCreatorId: '1',
       };
 
       mockCompanyService.deleteCompany.mockResolvedValue(deletedCompany);
