@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Report, Prisma } from '@prisma/client';
+import { Report, Prisma, Activity } from '@prisma/client';
 
 @Injectable()
 export class ReportService {
@@ -22,5 +22,20 @@ export class ReportService {
     return this.prisma.report.create({
       data,
     });
+  }
+
+  async getActivitiesByReportId(
+    reportWhereUniqueInput: Prisma.ReportWhereUniqueInput,
+  ): Promise<Activity[]> {
+    const report = await this.prisma.report.findUnique({
+      where: reportWhereUniqueInput,
+      include: { activities: true },
+    });
+
+    if (!report) {
+      throw new Error(`No report with id ${reportWhereUniqueInput.id}`);
+    }
+
+    return report.activities;
   }
 }

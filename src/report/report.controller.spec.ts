@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReportController } from './report.controller';
 import { ReportService } from './report.service';
-import { Report, Prisma } from '@prisma/client';
+import { Report, Prisma, Activity } from '@prisma/client';
 
 describe('ReportController', () => {
   let controller: ReportController;
@@ -10,6 +10,7 @@ describe('ReportController', () => {
     getReport: jest.fn(),
     getAllReports: jest.fn(),
     createReport: jest.fn(),
+    getActivitiesByReportId: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -129,6 +130,82 @@ describe('ReportController', () => {
         expectedServiceInput,
       );
       expect(result).toBe(createdReport);
+    });
+  });
+
+  describe('activities', () => {
+    it('should return a list of activities', async () => {
+      const mockActivities: Activity[] = [
+        {
+          id: 'a1',
+          date: new Date('2025-06-01'),
+          timeWorked: 'FULL_DAY',
+          reportId: 'r1',
+          comment: 'Did frontend tasks',
+        },
+      ];
+
+      mockReportService.getActivitiesByReportId.mockResolvedValue(
+        mockActivities,
+      );
+
+      const result = await controller.getActivities('r1');
+      expect(result).toEqual(mockActivities);
+      expect(mockReportService.getActivitiesByReportId).toHaveBeenCalledWith({
+        id: 'r1',
+      });
+    });
+
+    it('should return an empty list if there are no activities', async () => {
+      mockReportService.getActivitiesByReportId.mockResolvedValue([]);
+
+      const result = await controller.getActivities('r1');
+      expect(result).toEqual([]);
+    });
+
+    it('should throw an error if report not found', async () => {
+      mockReportService.getActivitiesByReportId.mockRejectedValue(
+        new Error('No report with id r1'),
+      );
+
+      await expect(controller.getActivities('r1')).rejects.toThrow(
+        'No report with id r1',
+      );
+    });
+  });
+
+  describe('totalTime', () => {
+    it('should return a positive number', async () => {
+      const mockActivities: Activity[] = [
+        {
+          id: '1',
+          date: new Date(),
+          timeWorked: 'FULL_DAY',
+          reportId: 'r1',
+          comment: null,
+        },
+        {
+          id: '2',
+          date: new Date(),
+          timeWorked: 'HALF_DAY',
+          reportId: 'r1',
+          comment: null,
+        },
+      ];
+
+      mockReportService.getActivitiesByReportId.mockResolvedValue(
+        mockActivities,
+      );
+
+      const result = await controller.getTotalTime('r1');
+      expect(result).toBe(1.5);
+    });
+
+    it('should return 0 if there are no activities', async () => {
+      mockReportService.getActivitiesByReportId.mockResolvedValue([]);
+
+      const result = await controller.getTotalTime('r1');
+      expect(result).toBe(0);
     });
   });
 });

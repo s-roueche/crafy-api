@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReportService } from './report.service';
-import { Report, Prisma } from '@prisma/client';
+import { Report, Prisma, Activity } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
 describe('ReportService', () => {
@@ -125,6 +125,58 @@ describe('ReportService', () => {
         data: userInput,
       });
       expect(result).toBe(createdReport);
+    });
+  });
+
+  describe('getActivitiesByReportId', () => {
+    it('should return a list of activities', async () => {
+      const mockActivities: Activity[] = [
+        {
+          id: 'activity-1',
+          date: new Date('2025-06-01'),
+          timeWorked: 'FULL_DAY',
+          reportId: 'report-1',
+          comment: 'Worked on frontend',
+        },
+      ];
+
+      mockPrismaService.report.findUnique.mockResolvedValue({
+        id: 'report-1',
+        activities: mockActivities,
+      });
+
+      const result = await service.getActivitiesByReportId({
+        id: 'report-1',
+      });
+      expect(result).toEqual(mockActivities);
+      expect(mockPrismaService.report.findUnique).toHaveBeenCalledWith({
+        where: { id: 'report-1' },
+        include: { activities: true },
+      });
+    });
+
+    it('should return an empty list if there are no activities', async () => {
+      mockPrismaService.report.findUnique.mockResolvedValue({
+        id: 'report-1',
+        activities: [],
+      });
+
+      const result = await service.getActivitiesByReportId({ id: 'report-1' });
+      expect(result).toEqual([]);
+      expect(mockPrismaService.report.findUnique).toHaveBeenCalled();
+    });
+
+    it('should throw an error if report does not exist', async () => {
+      mockPrismaService.report.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.getActivitiesByReportId({ id: 'non-existent-id' }),
+      ).rejects.toThrow('No report with id non-existent-id');
+
+      expect(mockPrismaService.report.findUnique).toHaveBeenCalledWith({
+        where: { id: 'non-existent-id' },
+        include: { activities: true },
+      });
     });
   });
 });

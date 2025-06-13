@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ReportService } from './report.service';
-import { Report } from '@prisma/client';
+import { Activity, Report } from '@prisma/client';
 
 @Controller('report')
 export class ReportController {
@@ -45,5 +45,24 @@ export class ReportController {
         },
       },
     });
+  }
+
+  @Get(':id/activities')
+  async getActivities(@Param('id') id: string): Promise<Activity[]> {
+    return this.reportService.getActivitiesByReportId({ id });
+  }
+
+  @Get(':id/totalTime')
+  async getTotalTime(@Param('id') id: string): Promise<number> {
+    const activities = await this.reportService.getActivitiesByReportId({ id });
+    let sum = 0;
+    for (const activity of activities) {
+      if (activity.timeWorked === 'FULL_DAY') {
+        sum++;
+      } else {
+        sum += 0.5;
+      }
+    }
+    return sum;
   }
 }
