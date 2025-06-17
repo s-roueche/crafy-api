@@ -10,6 +10,7 @@ describe('ActivityController', () => {
     getActivity: jest.fn(),
     getAllActivities: jest.fn(),
     createActivity: jest.fn(),
+    updateActivity: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -120,6 +121,56 @@ describe('ActivityController', () => {
         },
       });
       expect(result).toBe(createdActivity);
+    });
+  });
+
+  describe('updateActivityTimeWorked', () => {
+    it('should update the timeWorked and return the activity', async () => {
+      const id = '1';
+      const updateData = {
+        timeWorked: 'FULL_DAY' as TimeWorked,
+      };
+      const updatedActivity: Activity = {
+        id,
+        date: new Date('2025-06-03'),
+        comment: 'Created test cases',
+        timeWorked: 'FULL_DAY' as TimeWorked,
+        reportId: 'report-3',
+      };
+
+      mockActivityService.updateActivity.mockResolvedValue(updatedActivity);
+
+      const result = await controller.updateActivityTimeWorked(id, updateData);
+      expect(mockActivityService.updateActivity).toHaveBeenCalledWith({
+        where: { id },
+        data: updateData,
+      });
+      expect(result).toBe(updatedActivity);
+    });
+  });
+
+  describe('updateActivityComment', () => {
+    it('should update the comment and return the activity', async () => {
+      const id = '1';
+      const updateData = {
+        comment: 'Updated test cases',
+      };
+      const updatedActivity: Activity = {
+        id,
+        date: new Date('2025-06-03'),
+        comment: 'Updated test cases',
+        timeWorked: 'FULL_DAY' as TimeWorked,
+        reportId: 'report-3',
+      };
+
+      mockActivityService.updateActivity.mockResolvedValue(updatedActivity);
+
+      const result = await controller.updateActivityComment(id, updateData);
+      expect(mockActivityService.updateActivity).toHaveBeenCalledWith({
+        where: { id },
+        data: updateData,
+      });
+      expect(result).toBe(updatedActivity);
     });
   });
 });

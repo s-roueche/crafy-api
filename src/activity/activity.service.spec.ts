@@ -11,6 +11,7 @@ describe('ActivityService', () => {
       findUnique: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -122,6 +123,41 @@ describe('ActivityService', () => {
         data: activityInput,
       });
       expect(result).toBe(createdActivity);
+    });
+  });
+
+  describe('updateActivity', () => {
+    it('should update and return the activity', async () => {
+      const updateInput: Prisma.ActivityUpdateInput = {
+        comment: 'Updated comment',
+        timeWorked: 'HALF_DAY',
+      };
+
+      const whereInput: Prisma.ActivityWhereUniqueInput = {
+        id: '1',
+      };
+
+      const updatedActivity: Activity = {
+        id: '1',
+        date: new Date('2025-06-01'),
+        timeWorked: 'HALF_DAY',
+        reportId: 'report-1',
+        comment: 'Updated comment',
+      };
+
+      mockPrismaService.activity.update.mockResolvedValue(updatedActivity);
+
+      const result = await activityService.updateActivity({
+        data: updateInput,
+        where: whereInput,
+      });
+
+      expect(mockPrismaService.activity.update).toHaveBeenCalledWith({
+        data: updateInput,
+        where: whereInput,
+      });
+
+      expect(result).toBe(updatedActivity);
     });
   });
 });

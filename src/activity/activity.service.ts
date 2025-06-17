@@ -23,4 +23,15 @@ export class ActivityService {
       data,
     });
   }
+
+  async updateActivity(params: {
+    data: Prisma.ActivityUpdateInput;
+    where: Prisma.ActivityWhereUniqueInput;
+  }): Promise<Activity> {
+    const { data, where } = params;
+    return this.prisma.activity.update({
+      data,
+      where,
+    });
+  }
 }

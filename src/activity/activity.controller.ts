@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { Activity, TimeWorked } from '@prisma/client';
 
@@ -40,6 +40,28 @@ export class ActivityController {
         },
       },
       date,
+    });
+  }
+
+  @Put('timeWorked/:id')
+  async updateActivityTimeWorked(
+    @Param('id') id: string,
+    @Body() data: { timeWorked: TimeWorked },
+  ): Promise<Activity> {
+    return this.activityService.updateActivity({
+      data,
+      where: { id },
+    });
+  }
+
+  @Put('comment/:id')
+  async updateActivityComment(
+    @Param('id') id: string,
+    @Body() data: { comment: string },
+  ): Promise<Activity> {
+    return this.activityService.updateActivity({
+      data,
+      where: { id },
     });
   }
 }
