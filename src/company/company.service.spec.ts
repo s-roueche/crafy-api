@@ -37,7 +37,11 @@ describe('CompanyService', () => {
 
   describe('getCompany', () => {
     it('should return a company if found', async () => {
-      const company: Company = { id: '1', businessName: 'ACME Corp' };
+      const company: Company = {
+        id: '1',
+        businessName: 'ACME Corp',
+        userCreatorId: '1',
+      };
       mockPrismaService.company.findUnique.mockResolvedValue(company);
 
       const result = await companyService.getCompany({ id: '1' });
@@ -58,8 +62,8 @@ describe('CompanyService', () => {
   describe('getAllCompanies', () => {
     it('should return an array of companies', async () => {
       const companies: Company[] = [
-        { id: '1', businessName: 'ACME Corp' },
-        { id: '2', businessName: 'Globex Inc' },
+        { id: '1', businessName: 'ACME Corp', userCreatorId: '1' },
+        { id: '2', businessName: 'Globex Inc', userCreatorId: '2' },
       ];
       mockPrismaService.company.findMany.mockResolvedValue(companies);
 
@@ -83,11 +87,17 @@ describe('CompanyService', () => {
         reports: {
           connect: [],
         },
+        userCreator: {
+          connect: {
+            id: '1',
+          },
+        },
       };
 
       const createdCompany: Company = {
         id: '3',
         businessName: 'Wayne Enterprises',
+        userCreatorId: '1',
       };
 
       mockPrismaService.company.create.mockResolvedValue(createdCompany);
@@ -110,6 +120,7 @@ describe('CompanyService', () => {
       const updatedCompany: Company = {
         id: '1',
         businessName: 'New Name Inc',
+        userCreatorId: '1',
       };
 
       mockPrismaService.company.update.mockResolvedValue(updatedCompany);
@@ -132,6 +143,7 @@ describe('CompanyService', () => {
       const companyToDelete: Company = {
         id: '1',
         businessName: 'Old Corp',
+        userCreatorId: '1',
       };
 
       mockPrismaService.company.delete.mockResolvedValue(companyToDelete);
