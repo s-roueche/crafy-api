@@ -34,4 +34,8 @@ export class ActivityService {
       where,
     });
   }
+
+  async deleteActivity(id: string): Promise<Activity> {
+    return this.prisma.activity.delete({ where: { id } });
+  }
 }

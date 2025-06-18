@@ -12,6 +12,7 @@ describe('ActivityService', () => {
       findMany: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      delete: jest.fn(),
     },
   };
 
@@ -158,6 +159,26 @@ describe('ActivityService', () => {
       });
 
       expect(result).toBe(updatedActivity);
+    });
+  });
+
+  describe('deleteActivity', () => {
+    it('should delete and return the activity if it exists', async () => {
+      const deletedActivity: Activity = {
+        id: '3',
+        date: new Date('2025-06-03'),
+        timeWorked: 'FULL_DAY',
+        reportId: 'report-3',
+        comment: 'Worked all day',
+      };
+
+      mockPrismaService.activity.delete.mockResolvedValue(deletedActivity);
+
+      const result = await activityService.deleteActivity('3');
+      expect(mockPrismaService.activity.delete).toHaveBeenCalledWith({
+        where: { id: '3' },
+      });
+      expect(result).toBe(deletedActivity);
     });
   });
 });

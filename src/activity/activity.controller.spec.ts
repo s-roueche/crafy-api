@@ -11,6 +11,7 @@ describe('ActivityController', () => {
     getAllActivities: jest.fn(),
     createActivity: jest.fn(),
     updateActivity: jest.fn(),
+    deleteActivity: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -171,6 +172,24 @@ describe('ActivityController', () => {
         data: updateData,
       });
       expect(result).toBe(updatedActivity);
+    });
+  });
+
+  describe('deleteActivity', () => {
+    it('should delete and return the activity', async () => {
+      const deletedActivity: Activity = {
+        id: '3',
+        date: new Date('2025-06-03'),
+        timeWorked: 'FULL_DAY',
+        reportId: 'report-3',
+        comment: 'Worked all day',
+      };
+
+      mockActivityService.deleteActivity.mockResolvedValue(deletedActivity);
+
+      const result = await controller.deleteActivity('3');
+      expect(mockActivityService.deleteActivity).toHaveBeenCalledWith('3');
+      expect(result).toBe(deletedActivity);
     });
   });
 });

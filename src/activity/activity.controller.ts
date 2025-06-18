@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { Activity, TimeWorked } from '@prisma/client';
 
@@ -48,6 +56,7 @@ export class ActivityController {
     @Param('id') id: string,
     @Body() data: { timeWorked: TimeWorked },
   ): Promise<Activity> {
+    console.log('HIT: updateActivityTimeWorked');
     return this.activityService.updateActivity({
       data,
       where: { id },
@@ -63,5 +72,10 @@ export class ActivityController {
       data,
       where: { id },
     });
+  }
+
+  @Delete(':id')
+  async deleteActivity(@Param('id') id: string): Promise<Activity> {
+    return this.activityService.deleteActivity(id);
   }
 }
