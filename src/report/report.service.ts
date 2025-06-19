@@ -38,4 +38,11 @@ export class ReportService {
 
     return report.activities;
   }
+
+  async updateReport(params: {
+    where: Prisma.ReportWhereUniqueInput;
+    data: Prisma.ReportUpdateInput;
+  }): Promise<Report> {
+    return this.prisma.report.update(params);
+  }
 }

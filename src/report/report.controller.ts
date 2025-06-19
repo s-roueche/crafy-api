@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { Activity, Report } from '@prisma/client';
 
@@ -64,5 +64,17 @@ export class ReportController {
       }
     }
     return sum;
+  }
+
+  @Put('comment/:id')
+  async updateComment(
+    @Param('id') id: string,
+    @Body() data: { comment: string },
+  ): Promise<Report> {
+    const { comment } = data;
+    return this.reportService.updateReport({
+      where: { id },
+      data: { comment },
+    });
   }
 }

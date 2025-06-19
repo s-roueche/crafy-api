@@ -11,6 +11,7 @@ describe('ReportController', () => {
     getAllReports: jest.fn(),
     createReport: jest.fn(),
     getActivitiesByReportId: jest.fn(),
+    updateReport: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -206,6 +207,31 @@ describe('ReportController', () => {
 
       const result = await controller.getTotalTime('r1');
       expect(result).toBe(0);
+    });
+  });
+
+  describe('updateComment', () => {
+    it('should update the comment and return the activity', async () => {
+      const id = '1';
+      const updateData = {
+        comment: 'Updated comment',
+      };
+      const updatedReport: Report = {
+        id: '1',
+        clientId: '11',
+        monthReport: new Date('01/06/2025'),
+        comment: 'Updated comment',
+        userId: '1001',
+      };
+
+      mockReportService.updateReport.mockResolvedValue(updatedReport);
+
+      const result = await controller.updateComment(id, updateData);
+      expect(mockReportService.updateReport).toHaveBeenCalledWith({
+        where: { id },
+        data: updateData,
+      });
+      expect(result).toBe(updatedReport);
     });
   });
 });

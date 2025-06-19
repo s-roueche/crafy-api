@@ -11,6 +11,7 @@ describe('ReportService', () => {
       findUnique: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -177,6 +178,40 @@ describe('ReportService', () => {
         where: { id: 'non-existent-id' },
         include: { activities: true },
       });
+    });
+  });
+
+  describe('updateReport', () => {
+    it('should update and return the report', async () => {
+      const updateInput: Prisma.ReportUpdateInput = {
+        comment: 'Updated comment',
+      };
+
+      const whereInput: Prisma.ReportWhereUniqueInput = {
+        id: '1',
+      };
+
+      const updatedReport: Report = {
+        id: '1',
+        clientId: '11',
+        monthReport: new Date('01/06/2025'),
+        comment: 'Updated comment',
+        userId: '1001',
+      };
+
+      mockPrismaService.report.update.mockResolvedValue(updatedReport);
+
+      const result = await service.updateReport({
+        data: updateInput,
+        where: whereInput,
+      });
+
+      expect(mockPrismaService.report.update).toHaveBeenCalledWith({
+        data: updateInput,
+        where: whereInput,
+      });
+
+      expect(result).toBe(updatedReport);
     });
   });
 });
