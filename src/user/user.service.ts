@@ -23,4 +23,11 @@ export class UserService {
       data,
     });
   }
+
+  async doesUserExist(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<boolean> {
+    const user = await this.getUser(userWhereUniqueInput);
+    return user !== null;
+  }
 }

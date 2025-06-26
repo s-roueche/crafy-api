@@ -21,6 +21,11 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @Get(':id/exists')
+  async doesUserExist(@Param('id') id: string): Promise<boolean> {
+    return this.userService.doesUserExist({ id });
+  }
+
   @Post()
   async createUser(@Body() data: Prisma.UserCreateInput): Promise<User> {
     return this.userService.createUser(data);

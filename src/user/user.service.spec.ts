@@ -88,4 +88,24 @@ describe('UserService', () => {
       expect(result).toBe(createdUser);
     });
   });
+
+  describe('doesUserExist', () => {
+    it('should return true if user exists', async () => {
+      const user: User = { id: '1' };
+      mockPrismaService.user.findUnique.mockResolvedValue(user);
+
+      const result = await userService.doesUserExist({ id: '1' });
+      expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
+      expect(result).toEqual(true);
+    });
+
+    it('should return false if user not found', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+
+      const result = await userService.doesUserExist({ id: '2' });
+      expect(result).toEqual(false);
+    });
+  });
 });
