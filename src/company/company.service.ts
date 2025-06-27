@@ -14,10 +14,6 @@ export class CompanyService {
     });
   }
 
-  async getAllCompanies(): Promise<Company[]> {
-    return this.prisma.company.findMany();
-  }
-
   async createCompany(data: Prisma.CompanyCreateInput): Promise<Company> {
     return this.prisma.company.create({
       data,
@@ -39,5 +35,9 @@ export class CompanyService {
     return this.prisma.company.delete({
       where,
     });
+  }
+
+  async getAllCompaniesByUserId(userId: string): Promise<Company[]> {
+    return this.prisma.company.findMany({ where: { userCreatorId: userId } });
   }
 }

@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from '@prisma/client';
+import { Authentication, CognitoUser } from '@nestjs-cognito/auth';
 
 @Controller('company')
+@Authentication()
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
@@ -26,8 +28,10 @@ export class CompanyController {
   }
 
   @Get()
-  async getAllCompanies(): Promise<Company[]> {
-    return this.companyService.getAllCompanies();
+  async getAllCompanies(
+    @CognitoUser('username') username: string,
+  ): Promise<Company[]> {
+    return this.companyService.getAllCompaniesByUserId(username);
   }
 
   @Post()

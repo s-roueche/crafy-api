@@ -75,22 +75,24 @@ describe('ReportService', () => {
         {
           id: '2',
           clientId: '102',
-          userId: '1002',
+          userId: '1001',
           monthReport: new Date('2025-07-01'),
           comment: 'comment',
         },
       ];
       mockPrismaService.report.findMany.mockResolvedValue(reports);
 
-      const result = await service.getAllReports();
-      expect(mockPrismaService.report.findMany).toHaveBeenCalled();
+      const result = await service.getAllReportsByUser('1001');
+      expect(mockPrismaService.report.findMany).toHaveBeenCalledWith({
+        where: { userId: '1001' },
+      });
       expect(result).toBe(reports);
     });
 
     it('should return an empty list if no reports found', async () => {
       mockPrismaService.report.findMany.mockResolvedValue([]);
 
-      const result = await service.getAllReports();
+      const result = await service.getAllReportsByUser('1001');
       expect(result).toEqual([]);
     });
   });

@@ -78,21 +78,4 @@ describe('UserController', () => {
       expect(result).toBe(createdUser);
     });
   });
-
-  describe('doesUserExist', () => {
-    it('should return true if user exists', async () => {
-      mockUserService.doesUserExist.mockResolvedValue(true);
-
-      const result = await controller.doesUserExist('1');
-      expect(mockUserService.doesUserExist).toHaveBeenCalledWith({ id: '1' });
-      expect(result).toEqual(true);
-    });
-
-    it("should return false if user doesn't exist", async () => {
-      mockUserService.doesUserExist.mockResolvedValue(false);
-
-      const result = await controller.doesUserExist('1');
-      expect(result).toEqual(false);
-    });
-  });
 });

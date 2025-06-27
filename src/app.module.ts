@@ -7,14 +7,16 @@ import { CompanyModule } from './company/company.module';
 import { UserModule } from './user/user.module';
 import { ReportModule } from './report/report.module';
 import { ActivityModule } from './activity/activity.module';
+import getCognitoAuthModule from './getCognitoAuthModule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    getCognitoAuthModule(),
     CompanyModule,
     UserModule,
     ReportModule,
     ActivityModule,
+    ConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

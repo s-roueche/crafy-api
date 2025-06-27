@@ -2,13 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ReportController } from './report.controller';
 import { ReportService } from './report.service';
 import { Report, Prisma, Activity } from '@prisma/client';
+import getCognitoAuthModule from '../getCognitoAuthModule';
 
 describe('ReportController', () => {
   let controller: ReportController;
 
   const mockReportService = {
     getReport: jest.fn(),
-    getAllReports: jest.fn(),
+    getAllReportsByUser: jest.fn(),
     createReport: jest.fn(),
     getActivitiesByReportId: jest.fn(),
     updateReport: jest.fn(),
@@ -16,6 +17,7 @@ describe('ReportController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [getCognitoAuthModule()],
       controllers: [ReportController],
       providers: [{ provide: ReportService, useValue: mockReportService }],
     }).compile();
@@ -72,22 +74,24 @@ describe('ReportController', () => {
         {
           id: '2',
           clientId: '102',
-          userId: '1002',
+          userId: '1001',
           monthReport: new Date('2025-06-01'),
           comment: 'Report 2',
         },
       ];
-      mockReportService.getAllReports.mockResolvedValue(reports);
+      mockReportService.getAllReportsByUser.mockResolvedValue(reports);
 
-      const result = await controller.getAllReports();
-      expect(mockReportService.getAllReports).toHaveBeenCalled();
+      const result = await controller.getAllReports('1001');
+      expect(mockReportService.getAllReportsByUser).toHaveBeenCalledWith(
+        '1001',
+      );
       expect(result).toBe(reports);
     });
 
     it('should return an empty array if there are no reports', async () => {
-      mockReportService.getAllReports.mockResolvedValue([]);
+      mockReportService.getAllReportsByUser.mockResolvedValue([]);
 
-      const result = await controller.getAllReports();
+      const result = await controller.getAllReports('1001');
       expect(result).toEqual([]);
     });
   });

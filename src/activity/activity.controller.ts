@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { Activity, TimeWorked } from '@prisma/client';
+import { Authentication } from '@nestjs-cognito/auth';
 
 @Controller('activity')
+@Authentication()
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
 

@@ -1,8 +1,10 @@
 import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { Activity, Report } from '@prisma/client';
+import { Authentication, CognitoUser } from '@nestjs-cognito/auth';
 
 @Controller('report')
+@Authentication()
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
@@ -16,8 +18,10 @@ export class ReportController {
   }
 
   @Get()
-  async getAllReports(): Promise<Report[]> {
-    return this.reportService.getAllReports();
+  async getAllReports(
+    @CognitoUser('username') username: string,
+  ): Promise<Report[]> {
+    return this.reportService.getAllReportsByUser(username);
   }
 
   @Post()

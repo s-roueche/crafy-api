@@ -59,27 +59,6 @@ describe('CompanyService', () => {
     });
   });
 
-  describe('getAllCompanies', () => {
-    it('should return an array of companies', async () => {
-      const companies: Company[] = [
-        { id: '1', businessName: 'ACME Corp', userCreatorId: '1' },
-        { id: '2', businessName: 'Globex Inc', userCreatorId: '2' },
-      ];
-      mockPrismaService.company.findMany.mockResolvedValue(companies);
-
-      const result = await companyService.getAllCompanies();
-      expect(mockPrismaService.company.findMany).toHaveBeenCalled();
-      expect(result).toBe(companies);
-    });
-
-    it('should return an empty array if no companies found', async () => {
-      mockPrismaService.company.findMany.mockResolvedValue([]);
-
-      const result = await companyService.getAllCompanies();
-      expect(result).toEqual([]);
-    });
-  });
-
   describe('createCompany', () => {
     it('should create and return a new company', async () => {
       const companyInput: Prisma.CompanyCreateInput = {
@@ -154,6 +133,34 @@ describe('CompanyService', () => {
         where: { id: '1' },
       });
       expect(result).toBe(companyToDelete);
+    });
+  });
+
+  describe('getAllCompaniesByUserId', () => {
+    it('should return all companies by the use', async () => {
+      const companies: Company[] = [
+        { id: '2', businessName: 'Globex Inc', userCreatorId: '2' },
+        { id: '3', businessName: 'Flex Inc', userCreatorId: '2' },
+      ];
+
+      mockPrismaService.company.findMany.mockResolvedValue(companies);
+
+      const result = await companyService.getAllCompaniesByUserId('2');
+
+      expect(mockPrismaService.company.findMany).toHaveBeenCalledWith({
+        where: { userCreatorId: '2' },
+      });
+      expect(result).toBe(companies);
+    });
+
+    it('should return an empty array if no companies by this user exist', async () => {
+      mockPrismaService.company.findMany.mockResolvedValue([]);
+
+      const result = await companyService.getAllCompaniesByUserId('2');
+      expect(mockPrismaService.company.findMany).toHaveBeenCalledWith({
+        where: { userCreatorId: '2' },
+      });
+      expect(result).toEqual([]);
     });
   });
 });

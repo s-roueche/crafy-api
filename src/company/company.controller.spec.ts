@@ -2,13 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
 import { Company } from '@prisma/client';
+import getCognitoAuthModule from '../getCognitoAuthModule';
 
 describe('CompanyController', () => {
   let controller: CompanyController;
 
   const mockCompanyService = {
     getCompany: jest.fn(),
-    getAllCompanies: jest.fn(),
+    getAllCompaniesByUserId: jest.fn(),
     createCompany: jest.fn(),
     updateCompany: jest.fn(),
     deleteCompany: jest.fn(),
@@ -16,6 +17,7 @@ describe('CompanyController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [getCognitoAuthModule()],
       controllers: [CompanyController],
       providers: [{ provide: CompanyService, useValue: mockCompanyService }],
     }).compile();
@@ -58,19 +60,21 @@ describe('CompanyController', () => {
     it('should return an array of companies', async () => {
       const companies: Company[] = [
         { id: '1', businessName: 'ACME Corp', userCreatorId: '1' },
-        { id: '2', businessName: 'Globex Inc', userCreatorId: '2' },
+        { id: '2', businessName: 'Globex Inc', userCreatorId: '1' },
       ];
-      mockCompanyService.getAllCompanies.mockResolvedValue(companies);
+      mockCompanyService.getAllCompaniesByUserId.mockResolvedValue(companies);
 
-      const result = await controller.getAllCompanies();
-      expect(mockCompanyService.getAllCompanies).toHaveBeenCalled();
+      const result = await controller.getAllCompanies('1');
+      expect(mockCompanyService.getAllCompaniesByUserId).toHaveBeenCalledWith(
+        '1',
+      );
       expect(result).toBe(companies);
     });
 
     it('should return an empty array if no companies exist', async () => {
-      mockCompanyService.getAllCompanies.mockResolvedValue([]);
+      mockCompanyService.getAllCompaniesByUserId.mockResolvedValue([]);
 
-      const result = await controller.getAllCompanies();
+      const result = await controller.getAllCompanies('1');
       expect(result).toEqual([]);
     });
   });

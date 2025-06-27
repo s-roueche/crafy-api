@@ -14,8 +14,8 @@ export class ReportService {
     });
   }
 
-  async getAllReports(): Promise<Report[]> {
-    return this.prisma.report.findMany();
+  async getAllReportsByUser(userId: string): Promise<Report[]> {
+    return this.prisma.report.findMany({ where: { userId } });
   }
 
   async createReport(data: Prisma.ReportCreateInput): Promise<Report> {
