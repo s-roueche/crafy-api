@@ -28,10 +28,8 @@ export class CompanyController {
   }
 
   @Get()
-  async getAllCompanies(
-    @CognitoUser('username') username: string,
-  ): Promise<Company[]> {
-    return this.companyService.getAllCompaniesByUserId(username);
+  async getAllCompanies(@CognitoUser('sub') sub: string): Promise<Company[]> {
+    return this.companyService.getAllCompaniesByUserId(sub);
   }
 
   @Post()

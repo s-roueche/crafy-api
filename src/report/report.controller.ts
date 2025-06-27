@@ -18,10 +18,8 @@ export class ReportController {
   }
 
   @Get()
-  async getAllReports(
-    @CognitoUser('username') username: string,
-  ): Promise<Report[]> {
-    return this.reportService.getAllReportsByUser(username);
+  async getAllReports(@CognitoUser('sub') sub: string): Promise<Report[]> {
+    return this.reportService.getAllReportsByUser(sub);
   }
 
   @Post()
